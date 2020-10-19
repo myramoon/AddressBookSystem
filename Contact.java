@@ -1,4 +1,4 @@
-/* Purpose: Edit a contact in address book */
+/* Purpose: Delete a contact in address book */
 
 public class Contact {
 	private String firstName;

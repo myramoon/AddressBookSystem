@@ -1,11 +1,11 @@
-/* Purpose: Edit a contact in address book */
+/* Purpose: Delete a contact in address book */
 
 import java.util.Scanner;
 import java.util.ArrayList;
 
 public class AddressBook {
 	
-	ArrayList<Contact> contactList = new ArrayList<Contact>();
+	ArrayList<Contact> contactList = new ArrayList<Contact>(); //ArrayList to store contacts
 	
 	/* method to display contact manipulation menu */	
 	public void displayMenu() {
@@ -13,7 +13,8 @@ public class AddressBook {
 		System.out.println("1. Add contact");
 		System.out.println("2. Edit contact");
 		System.out.println("3. Display contacts");
-		System.out.println("4. Exit");
+		System.out.println("4. Delete a contact");
+		System.out.println("5. Exit");
 	}
 
 	/* method to direct control to respective contact manipulation action methods*/
@@ -35,11 +36,15 @@ public class AddressBook {
 					displayContacts();
 					break;
 				case 4:
+					deleteContacts();
+					break;
+				case 5:
 					System.exit(0);
+
 				default:
 					System.out.println("Invalid choice.Try again.");
 			}
-		} while (choice != 4);
+		} while (choice != 5);
 
 	}
 
@@ -73,25 +78,28 @@ public class AddressBook {
 		
 		Contact newcontact = new Contact(firstName , lastName , houseId , city , state , zip , phoneNum , email);		
 		contactList.add(newcontact);
-		System.out.println("Contact created.");
 	}
 	
 	/* method to access contact to be edited */
 	private void editContact() {
 		int choice;
-		System.out.println("Enter the first name of the contact you want to edit: ");
-		Scanner scan = new Scanner(System.in);
-		String name = scan.next();
-		for (int i = 0; i < contactList.size(); i++) 
-			if (contactList.get(i).getFirstName().equals(name) ) {
-				do {
-					choice = displayEditMenu();
-					editActions(choice,contactList.get(i));
-				} while (choice != 7);	
-			}
-			else
-				System.out.println("Contact doesn't exist");
-		
+		if(contactList.size() == 0) {
+			System.out.println("Contact list is currently empty.");
+		}
+		else {
+			System.out.println("Enter the first name of the contact you want to edit: ");
+			Scanner scan = new Scanner(System.in);
+			String name = scan.next();
+			for (int i = 0; i < contactList.size(); i++) 
+				if (contactList.get(i).getFirstName().equals(name) ) {
+					do {
+						choice = displayEditMenu();
+						editActions(choice,contactList.get(i));
+					} while (choice != 7);	
+				}
+				else
+					System.out.println("Contact doesn't exist");
+		}		
 	}
 	
 	/* method to display edit menu */
@@ -156,17 +164,38 @@ public class AddressBook {
 	/* method to display contact details of each contact in address book */
 	private void displayContacts() {
 		int i = 0;
-		while (i < contactList.size()) {
-		System.out.println(contactList.get(i));
-		System.out.println();
-		i++;
-		}
+		if(contactList.size() == 0)
+			System.out.println("Contact list is empty!");
+		else
+			while (i < contactList.size()) {
+				System.out.println(contactList.get(i));
+				i++;
+			}
 	}
 	
+	/* method to delete a contact */
+	private void deleteContacts() {
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Enter the first name of the contact you want to delete: ");
+		String firstName = scan.next();
+		System.out.println("Enter the last name of the contact you want to delete: ");
+		String lastName = scan.next();
+			
+		for(int i = 0; i < contactList.size(); i++)
+			if (contactList.get(i).getFirstName().equals(firstName)) {
+				if (contactList.get(i).getLastName().equals(lastName))
+					contactList.remove(contactList.get(i));
+				else
+					System.out.println("No such contact exists.");
+			}
+				
+	}
+
 	public static void main(String[] args) {
 		AddressBook contactBook = new AddressBook(); //create new address book
 		contactBook.contactManagementMenu();	     //show contact manipulation menu
 	}
 
 }
+
 
