@@ -1,4 +1,4 @@
-/* Purpose: Add multiple address books */
+/* Purpose: Add code to prevent duplicate contacts */
 
 public class Contact {
 	private String firstName;
@@ -27,11 +27,9 @@ public class Contact {
 		return firstName;
 	}
 
-
 	public String getLastName() {
 		return lastName;
 	}
-
 
 	public String getAddress() {
 		return address;

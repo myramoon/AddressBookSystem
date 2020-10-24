@@ -1,79 +1,73 @@
-/* Purpose: Add multiple address books */
+/* Purpose: Add code to prevent duplicate contacts */
 
 import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 public class AddressBook {
-	
-	ArrayList<Contact> contactList = new ArrayList<Contact>(); //ArrayList to store contacts
-	static HashMap<String , AddressBook> addressBookDictionary = new HashMap<String , AddressBook >();
-	
+
+	//LinkedList to store contacts
+	LinkedList<Contact> contactList = new LinkedList<Contact>();
+	//LinkedHashMap to store address books
+	static LinkedHashMap<String , AddressBook> addressBookDictionary = new LinkedHashMap<String , AddressBook >();
+
 	/* method to manage multiple address books */
 	private static void bookManagementMenu() {
 		int choice;
 		Scanner scan =new Scanner(System.in);
-		
+
 		do {
 			System.out.println("Enter your choice: ");
 			System.out.println("1.Create new address book ");
 			System.out.println("2.Access existing address book ");
 			System.out.println("3.Exit ");
-			
+
 			choice = scan.nextInt();
 			switch(choice) {
 				case 1:
 					String bookName = getAddressBookName();
 					if ( addressBookDictionary.containsKey(bookName) == true ) {
-					
-						do {	 
+
+						do {
 							System.out.println(bookName + " already exists.Please specify another name. ");
 							bookName = getAddressBookName();
-						} while (addressBookDictionary.containsKey(bookName) != false );	
-					
+						} while (addressBookDictionary.containsKey(bookName) != false );
+
 					}
 					AddressBook contactBook = new AddressBook();
 					addressBookDictionary.put(bookName,contactBook);
 					System.out.println(bookName + " created.");
-					contactBook.contactManagementMenu();	
+					contactBook.contactManagementMenu();
 					break;
 				case 2:
-					String bookNameInput = getOldBookName();
+					String bookNameInput = getAddressBookName();
 					if (addressBookDictionary.containsKey(bookNameInput) == true) {
 						System.out.println("Welcome to " + bookNameInput + "! Contact management menu : ");
 						addressBookDictionary.get(bookNameInput).contactManagementMenu();
-					}	
+					}
 					else
 						System.out.println("Sorry!No such address book exists.Please try again.");
 					break;
-				
+
 				case 3:
 					System.exit(0);
-				
+
 				default:
 					System.out.println("Invalid choice.Try again.");
 			}
 		}while(choice != 3);
-		
 	}
-	
-	/* method to get name of existing address book from user */
-	private static String getOldBookName() {
-		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter name of the address book you wish to access: ");
-		String name = scan.next();
-		return name;
-	}
-	/* method to get name of new address book that user wants to create */
+
+	/* method to get name of address book from user */
 	private static String getAddressBookName() {
 		Scanner stdin = new Scanner(System.in);
-		System.out.println("Enter name of new address book:");
+		System.out.println("Enter name of address book:");
 		String name = stdin.next();
 		return name;
 	}
-		
 
-	/* method to display contact manipulation menu */	
+
+	/* method to display contact manipulation menu */
 	public void displayMenu() {
 		System.out.println("Enter your choice: ");
 		System.out.println("1. Add contact");
@@ -92,10 +86,16 @@ public class AddressBook {
 			choice = scan.nextInt();
 			switch(choice) {
 				case 1:
-					addContact();
-					System.out.println("Contact created.");
-					break;
-				case 2:	
+					boolean isNamePresent = addContact();
+					if(isNamePresent) {
+						System.out.println("Contact already exists!");
+						break;
+					}
+					else {
+						System.out.println("Contact created.");
+						break;
+					}
+				case 2:
 					editContact();
 					break;
 				case 3:
@@ -111,41 +111,45 @@ public class AddressBook {
 					System.out.println("Invalid choice.Try again.");
 			}
 		} while (choice != 5);
-
 	}
 
-	/* method to add contact */	
-	public void addContact() {
+	/* method to add contact */
+	public boolean addContact() {
 		Scanner scan = new Scanner(System.in);
-		
 		System.out.println("Enter first name: ");
 		String firstName = scan.next();
-		
+
 		System.out.println("Enter last name: ");
 		String lastName = scan.next();
-		
+		/* Checking for contact with same name in the existing contacts */
+		for (int i = 0; i < contactList.size(); i++) {
+			if(contactList.get(i).getFirstName().equals(firstName) && contactList.get(i).getLastName().equals(lastName))
+				return true;
+		}
+
 		System.out.println("Enter house id: ");
 		String houseId = scan.next();
-				
+
 		System.out.println("Enter city: ");
 		String city = scan.next();
-		
+
 		System.out.println("Enter state: ");
 		String state = scan.next();
-		
+
 		System.out.println("Enter zip code: ");
 		String zip = scan.next();
-		
+
 		System.out.println("Enter phone number: ");
 		String phoneNum = scan.next();
-		
+
 		System.out.println("Enter email: ");
 		String email = scan.next();
-		
-		Contact newcontact = new Contact(firstName , lastName , houseId , city , state , zip , phoneNum , email);		
+
+		Contact newcontact = new Contact(firstName , lastName , houseId , city , state , zip , phoneNum , email);
 		contactList.add(newcontact);
+		return false;
 	}
-	
+
 	/* method to access contact to be edited */
 	private void editContact() {
 		int choice;
@@ -156,21 +160,21 @@ public class AddressBook {
 			System.out.println("Enter the first name of the contact you want to edit: ");
 			Scanner scan = new Scanner(System.in);
 			String name = scan.next();
-			for (int i = 0; i < contactList.size(); i++) 
+			for (int i = 0; i < contactList.size(); i++)
 				if (contactList.get(i).getFirstName().equals(name) ) {
 					do {
 						choice = displayEditMenu();
 						editActions(choice,contactList.get(i));
-					} while (choice != 7);	
+					} while (choice != 7);
 				}
 				else
 					System.out.println("Contact doesn't exist");
-		}		
+		}
 	}
-	
+
 	/* method to display edit menu */
 	private int displayEditMenu() {
-		Scanner scan = new Scanner(System.in);		
+		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter your choice: ");
 		System.out.println("1. To edit house id ");
 		System.out.println("2. To edit city ");
@@ -181,14 +185,12 @@ public class AddressBook {
 		System.out.println("7. To exit edit zone ");
 		int choice = scan.nextInt();
 		return choice;
-		
 	}
-	
+
 	/* method to edit contact details */
 	private void editActions(int choice , Contact contactx) {
 		Scanner scan = new Scanner(System.in);
 		switch(choice) {
-			
 			case 1:
 				System.out.println("Enter new house id: ");
 				String houseId = scan.next();
@@ -224,9 +226,8 @@ public class AddressBook {
 			default:
 				System.out.println("Invalid choice,try again.");
 		}
-
 	}
-		
+
 	/* method to display contact details of each contact in address book */
 	private void displayContacts() {
 		int i = 0;
@@ -238,7 +239,7 @@ public class AddressBook {
 				i++;
 			}
 	}
-	
+
 	/* method to delete a contact */
 	private void deleteContacts() {
 		if (contactList.size() == 0){
@@ -250,7 +251,7 @@ public class AddressBook {
 			String firstName = scan.next();
 			System.out.println("Enter the last name of the contact you want to delete: ");
 			String lastName = scan.next();
-					
+
 			for(int i = 0; i < contactList.size(); i++)
 				if (contactList.get(i).getFirstName().equals(firstName)) {
 					if (contactList.get(i).getLastName().equals(lastName))
@@ -258,15 +259,10 @@ public class AddressBook {
 					else
 						System.out.println("No such contact exists.");
 				}
-	
-		}		
-	
+		}
 	}
 
 	public static void main(String[] args) {
 		bookManagementMenu();
 	}
-
 }
-
-
