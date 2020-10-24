@@ -83,5 +83,4 @@ public class Contact {
     public String toString() {
         return " First name: " + this.firstName + " Last Name: " + this.lastName + " House Id: " + this.address + " City: " + this.city + " State: " + this.state + " Zip: " + this.zip + " Phone number: " + this.phoneNum + " Email: " + this.email;
     }
-
 }
