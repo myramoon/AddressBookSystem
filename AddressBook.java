@@ -1,5 +1,4 @@
-/* Purpose: Add code to view contacts by city or state */
-
+/* Purpose: Refactored code to view number of contacts by city or state  */
 import java.util.*;
 
 public class AddressBook {
@@ -21,9 +20,8 @@ public class AddressBook {
             System.out.println("Enter your choice: ");
             System.out.println("1.Create new address book ");
             System.out.println("2.Access existing address book ");
-            System.out.println("3.Search contacts by attributes in existing address books");
-            System.out.println("4.View contacts by city and state");
-            System.out.println("5.Exit ");
+            System.out.println("3.View contacts by city and state and get count");
+            System.out.println("4.Exit ");
 
             choice = scan.nextInt();
             switch(choice) {
@@ -49,114 +47,74 @@ public class AddressBook {
                     else
                         System.out.println("Sorry!No such address book exists.Please try again.");
                     break;
+
                 case 3:
                     if (addressBookDictionary.isEmpty())
                         System.out.println("No address books present currently.");
-                    else
-                        determineAttribute();
+                    else {
+                        Scanner stdin = new Scanner(System.in);
+                        System.out.println(" Enter the search attribute you want to apply: ");
+                        String attribute = stdin.next();
+                        System.out.println("Enter name of " + attribute + ": ");
+                        String attributeName = stdin.next();
+                        createSearchDictionary(attribute , attributeName);
+                    }
                     break;
                 case 4:
-                    if (addressBookDictionary.isEmpty())
-                        System.out.println("No address books present currently.");
-                    else
-                        createSearchDictionary();
-                    break;
-                case 5:
                     System.exit(0);
                 default:
                     System.out.println("Invalid choice.Try again.");
             }
-        }while(choice != 5);
+        }while(choice != 4);
     }
 
-    /* method to determine attribute for customised search */
-    private static void determineAttribute() {
-        Set<String> keys = (addressBookDictionary.keySet());  //store keys of address book dictionary in a Set
-        Iterator<String> iterator = keys.iterator();
-        Scanner scan = new Scanner(System.in);
-        System.out.println(" Enter the search attribute you want to apply: ");
-        String attribute = scan.nextLine();
-        if (attribute.equals("city"))
-
-            displayByCity(scan, iterator);
-        else if (attribute.equals("state"))
-            displayByState(scan, iterator);
-        else
-            System.out.println("Invalid input");
-    }
     /* method to store and view people by city or state in dictionaries */
-    private static void createSearchDictionary() {
-        String currentAddressBook , city , state , firstName , lastName , name;
+    private static void createSearchDictionary(String attribute , String attributeName) {
+        String currentAddressBook, firstName, lastName, name;
+        int count;
         Set<String> keys = (addressBookDictionary.keySet());  //store keys of address book dictionary in a Set
         Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext()) {        //loop to traverse through each address book
             currentAddressBook = iterator.next();   //current address book
-            for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
-                city = addressBookDictionary.get(currentAddressBook).contactList.get(i).getCity();
-                state = addressBookDictionary.get(currentAddressBook).contactList.get(i).getState();
-                firstName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getFirstName();
-                lastName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getLastName();
-                name = firstName + " " + lastName;
-                cityDictionary.put(name , city);
-                stateDictionary.put(name , state);
+            if (attribute.equals("city")) {
+                for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
+                    if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getCity().equals(attributeName)) {
+                        firstName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getFirstName();
+                        lastName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getLastName();
+                        name = firstName + " " + lastName;
+                        cityDictionary.put(name, attributeName);
+                    }
+                }
+                System.out.println("Contacts by city: ");
+                cityDictionary.entrySet().forEach(entry -> { System.out.println(entry.getKey() + " " + entry.getValue()); });
+                System.out.println("Count of people in city " + attributeName + "is: " + cityDictionary.size());
+            }
+            else {
+                for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
+                    if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getState().equals(attributeName)) {
+                        firstName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getFirstName();
+                        lastName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getLastName();
+                        name = firstName + " " + lastName;
+                        stateDictionary.put(name, attributeName);
+                    }
+                }
+                System.out.println("Contacts by state: ");
+                stateDictionary.entrySet().forEach(entry -> { System.out.println(entry.getKey() + " " + entry.getValue()); });
+                System.out.println("Count of people in state " + attributeName + "is: " + stateDictionary.size());
             }
         }
-        System.out.println("Contacts by city: ");
-        cityDictionary.entrySet().forEach(entry-> { System.out.println(entry.getKey() + " " + entry.getValue()); });
-        System.out.println("Contacts by state: ");
-        stateDictionary.entrySet().forEach(entry-> { System.out.println(entry.getKey() + " " + entry.getValue()); });
     }
-
-    /* method to display contacts based on city */
-    private static void displayByCity(Scanner scan , Iterator<String> iterator) {
-        String currentAddressBook;
-        int noMatch = 0;
-        System.out.println("Enter city name: ");
-        String city = scan.nextLine();
-        while (iterator.hasNext()) {        //loop to traverse through each address book
-            currentAddressBook = iterator.next();   //current address book
-            for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++ ) {   //loop through each contact
-                if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getCity().equals(city))
-                    System.out.println("Contacts with " + city + " as city in address book " + currentAddressBook +  addressBookDictionary.get(currentAddressBook).contactList.get(i));
-                else
-                    noMatch++;
-            }
-        }
-        if (noMatch > 0)
-            System.out.println("No such contacts present in any existing address book");
-    }
-
-    /* method to display contacts based on state */
-    private static void displayByState(Scanner scan , Iterator<String> iterator) {
-        String currentAddressBook;
-        int noMatch = 0;
-        System.out.println("Enter state name: ");
-        String state = scan.nextLine();
-        while (iterator.hasNext()) {
-            currentAddressBook = iterator.next();
-            for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++ ) {
-                if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getState().equals(state))
-                    System.out.println("Contacts with " + state + " as state in address book " + currentAddressBook + addressBookDictionary.get(currentAddressBook).contactList.get(i));
-                else
-                    noMatch++;
-            }
-        }
-        if (noMatch > 0)
-            System.out.println("No such contacts present in any existing address book");
-    }
-
 
     /* method to get name of address book from user */
-    private static String getAddressBookName() {
+    private static String getAddressBookName () {
         Scanner stdin = new Scanner(System.in);
         System.out.println("Enter name of address book:");
-        String name = stdin.next();
-        return name;
+        return stdin.next();
     }
 
 
     /* method to display contact manipulation menu */
-    public void displayMenu() {
+    public void displayMenu () {
         System.out.println("Enter your choice: ");
         System.out.println("1. Add contact");
         System.out.println("2. Edit contact");
@@ -267,8 +225,7 @@ public class AddressBook {
         System.out.println("5. To edit phone number ");
         System.out.println("6. To edit email ");
         System.out.println("7. To exit edit zone ");
-        int choice = scan.nextInt();
-        return choice;
+        return scan.nextInt();
     }
 
     /* method to edit contact details */
@@ -350,3 +307,4 @@ public class AddressBook {
         bookManagementMenu();
     }
 }
+

@@ -1,4 +1,4 @@
-/* Purpose: Add code to view contacts by city or state */
+/* Purpose: Refactored code to view number of contacts by city or state  */
 
 public class Contact {
     private String firstName;
