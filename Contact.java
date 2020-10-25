@@ -1,4 +1,4 @@
-/* Purpose: Add code to prevent duplicate contacts */
+/* Purpose: Add code to view contacts by city or state */
 
 public class Contact {
     private String firstName;
