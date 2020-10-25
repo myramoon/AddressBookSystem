@@ -8,6 +8,9 @@ public class AddressBook {
     LinkedList<Contact> contactList = new LinkedList<>();
     //LinkedHashMap to store address books
     static LinkedHashMap<String , AddressBook> addressBookDictionary = new LinkedHashMap<>();
+    //HashMaps to store persons by city and state
+    static HashMap<String , String> cityDictionary = new HashMap<>();
+    static HashMap<String , String> stateDictionary = new HashMap<>();
 
     /* method to manage multiple address books */
     private static void bookManagementMenu() {
@@ -19,7 +22,8 @@ public class AddressBook {
             System.out.println("1.Create new address book ");
             System.out.println("2.Access existing address book ");
             System.out.println("3.Search contacts by attributes in existing address books");
-            System.out.println("4.Exit ");
+            System.out.println("4.View contacts by city and state");
+            System.out.println("5.Exit ");
 
             choice = scan.nextInt();
             switch(choice) {
@@ -51,14 +55,18 @@ public class AddressBook {
                     else
                         determineAttribute();
                     break;
-
                 case 4:
+                    if (addressBookDictionary.isEmpty())
+                        System.out.println("No address books present currently.");
+                    else
+                        createSearchDictionary();
+                    break;
+                case 5:
                     System.exit(0);
-
                 default:
                     System.out.println("Invalid choice.Try again.");
             }
-        }while(choice != 4);
+        }while(choice != 5);
     }
 
     /* method to determine attribute for customised search */
@@ -69,11 +77,34 @@ public class AddressBook {
         System.out.println(" Enter the search attribute you want to apply: ");
         String attribute = scan.nextLine();
         if (attribute.equals("city"))
+
             displayByCity(scan, iterator);
         else if (attribute.equals("state"))
             displayByState(scan, iterator);
         else
             System.out.println("Invalid input");
+    }
+    /* method to store and view people by city or state in dictionaries */
+    private static void createSearchDictionary() {
+        String currentAddressBook , city , state , firstName , lastName , name;
+        Set<String> keys = (addressBookDictionary.keySet());  //store keys of address book dictionary in a Set
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()) {        //loop to traverse through each address book
+            currentAddressBook = iterator.next();   //current address book
+            for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
+                city = addressBookDictionary.get(currentAddressBook).contactList.get(i).getCity();
+                state = addressBookDictionary.get(currentAddressBook).contactList.get(i).getState();
+                firstName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getFirstName();
+                lastName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getLastName();
+                name = firstName + " " + lastName;
+                cityDictionary.put(name , city);
+                stateDictionary.put(name , state);
+            }
+        }
+        System.out.println("Contacts by city: ");
+        cityDictionary.entrySet().forEach(entry-> { System.out.println(entry.getKey() + " " + entry.getValue()); });
+        System.out.println("Contacts by state: ");
+        stateDictionary.entrySet().forEach(entry-> { System.out.println(entry.getKey() + " " + entry.getValue()); });
     }
 
     /* method to display contacts based on city */
