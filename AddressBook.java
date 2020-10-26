@@ -71,11 +71,9 @@ public class AddressBook {
     /* method to store and view people by city or state in dictionaries */
     private static void createSearchDictionary(String attribute , String attributeName) {
         String currentAddressBook, firstName, lastName, name;
-        int count;
         Set<String> keys = (addressBookDictionary.keySet());  //store keys of address book dictionary in a Set
-        Iterator<String> iterator = keys.iterator();
-        while (iterator.hasNext()) {        //loop to traverse through each address book
-            currentAddressBook = iterator.next();   //current address book
+        for (String s : keys) {        //loop to traverse through each address book
+            currentAddressBook = s;   //current address book
             if (attribute.equals("city")) {
                 for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
                     if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getCity().equals(attributeName)) {
@@ -86,10 +84,9 @@ public class AddressBook {
                     }
                 }
                 System.out.println("Contacts by city: ");
-                cityDictionary.entrySet().forEach(entry -> { System.out.println(entry.getKey() + " " + entry.getValue()); });
+                cityDictionary.forEach((key, value) -> System.out.println(key + " " + value));
                 System.out.println("Count of people in city " + attributeName + "is: " + cityDictionary.size());
-            }
-            else {
+            } else {
                 for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
                     if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getState().equals(attributeName)) {
                         firstName = addressBookDictionary.get(currentAddressBook).contactList.get(i).getFirstName();
@@ -99,7 +96,7 @@ public class AddressBook {
                     }
                 }
                 System.out.println("Contacts by state: ");
-                stateDictionary.entrySet().forEach(entry -> { System.out.println(entry.getKey() + " " + entry.getValue()); });
+                stateDictionary.forEach((key , value) -> System.out.println(key + " " + value));
                 System.out.println("Count of people in state " + attributeName + "is: " + stateDictionary.size());
             }
         }
@@ -164,8 +161,8 @@ public class AddressBook {
         System.out.println("Enter last name: ");
         String lastName = scan.next();
         /* Checking for contact with same name in the existing contacts */
-        for (int i = 0; i < contactList.size(); i++) {
-            if(contactList.get(i).getFirstName().equals(firstName) && contactList.get(i).getLastName().equals(lastName))
+        for (Contact contact : contactList) {
+            if (contact.getFirstName().equals(firstName) && contact.getLastName().equals(lastName))
                 return true;
         }
 
@@ -202,11 +199,11 @@ public class AddressBook {
             System.out.println("Enter the first name of the contact you want to edit: ");
             Scanner scan = new Scanner(System.in);
             String name = scan.next();
-            for (int i = 0; i < contactList.size(); i++)
-                if (contactList.get(i).getFirstName().equals(name) ) {
+            for (Contact contact : contactList)
+                if (contact.getFirstName().equals(name) ) {
                     do {
                         choice = displayEditMenu();
-                        editActions(choice,contactList.get(i));
+                        editActions(choice , contact);
                     } while (choice != 7);
                 }
                 else
