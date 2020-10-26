@@ -1,4 +1,4 @@
-/* Purpose: Added code to sort contacts by name  */
+/* Purpose: Refactored code to sort contacts by criteria: name , city , zip or state  */
 
 public class Contact {
     private String firstName;

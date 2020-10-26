@@ -1,4 +1,4 @@
-/* Purpose: Added code to sort contacts by name  */
+/* Purpose: Refactored code to sort contacts by criteria: name , city , zip or state  */
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -157,14 +157,44 @@ public class AddressBook {
         } while (choice != 6);
     }
 
-    /* method to sort contacts by name */
+    /* method to sort contacts by criterion provided */
     public void sortContacts(){
-        List<String> nameList = new ArrayList<>();
-        for (Contact contact : contactList) {
-            nameList.add(contact.getFirstName());
+        List<String> sortList = new ArrayList<>();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Enter sort criterion: ");
+        System.out.println("1. Name ");
+        System.out.println("2. City ");
+        System.out.println("3. State ");
+        System.out.println("4. Zip ");
+        int choice = scan.nextInt();
+        switch (choice) {
+            case 1:
+                for (Contact contact : contactList) {
+                    sortList.add(contact.getFirstName());
+                }
+                break;
+            case 2:
+                for (Contact contact : contactList) {
+                    sortList.add(contact.getCity());
+                }
+                break;
+            case 3:
+                for (Contact contact : contactList) {
+                    sortList.add(contact.getState());
+                }
+                break;
+            case 4:
+                for (Contact contact : contactList) {
+                    sortList.add(contact.getZip());
+                }
+                break;
+            default:
+                System.out.println("Invalid input.");
+                return;
         }
-        nameList = nameList.stream().sorted().collect((Collectors.toList()));
-        System.out.println("Sorted contacts: "+ nameList);
+        sortList = sortList.stream().sorted().collect((Collectors.toList()));
+        System.out.println("Sorted contacts by zip: " + sortList);
+
     }
 
     /* method to add contact */
