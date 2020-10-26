@@ -1,4 +1,4 @@
-/* Purpose: Refactored code to view number of contacts by city or state  */
+/* Purpose: Added code to sort contacts by name  */
 
 public class Contact {
     private String firstName;
@@ -78,7 +78,6 @@ public class Contact {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String toString() {
         return " First name: " + this.firstName + " Last Name: " + this.lastName + " House Id: " + this.address + " City: " + this.city + " State: " + this.state + " Zip: " + this.zip + " Phone number: " + this.phoneNum + " Email: " + this.email;

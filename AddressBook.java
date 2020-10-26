@@ -1,5 +1,6 @@
-/* Purpose: Refactored code to view number of contacts by city or state  */
+/* Purpose: Added code to sort contacts by name  */
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AddressBook {
 
@@ -85,7 +86,7 @@ public class AddressBook {
                 }
                 System.out.println("Contacts by city: ");
                 cityDictionary.forEach((key, value) -> System.out.println(key + " " + value));
-                System.out.println("Count of people in city " + attributeName + "is: " + cityDictionary.size());
+                System.out.println("Count of people in " + attributeName + " is: " + cityDictionary.size());
             } else {
                 for (int i = 0; i < addressBookDictionary.get(currentAddressBook).contactList.size(); i++) {   //loop through each contact
                     if (addressBookDictionary.get(currentAddressBook).contactList.get(i).getState().equals(attributeName)) {
@@ -97,7 +98,7 @@ public class AddressBook {
                 }
                 System.out.println("Contacts by state: ");
                 stateDictionary.forEach((key , value) -> System.out.println(key + " " + value));
-                System.out.println("Count of people in state " + attributeName + "is: " + stateDictionary.size());
+                System.out.println("Count of people in " + attributeName + " is: " + stateDictionary.size());
             }
         }
     }
@@ -117,7 +118,8 @@ public class AddressBook {
         System.out.println("2. Edit contact");
         System.out.println("3. Display contacts");
         System.out.println("4. Delete a contact");
-        System.out.println("5. Exit this address book");
+        System.out.println("5. Sort contacts ");
+        System.out.println("6. Exit this address book");
     }
 
     /* method to direct control to respective contact manipulation action methods*/
@@ -145,11 +147,24 @@ public class AddressBook {
                     deleteContacts();
                     break;
                 case 5:
+                    sortContacts();
+                    break;
+                case 6:
                     break;
                 default:
                     System.out.println("Invalid choice.Try again.");
             }
-        } while (choice != 5);
+        } while (choice != 6);
+    }
+
+    /* method to sort contacts by name */
+    public void sortContacts(){
+        List<String> nameList = new ArrayList<>();
+        for (Contact contact : contactList) {
+            nameList.add(contact.getFirstName());
+        }
+        nameList = nameList.stream().sorted().collect((Collectors.toList()));
+        System.out.println("Sorted contacts: "+ nameList);
     }
 
     /* method to add contact */
