@@ -1,4 +1,5 @@
-/* Purpose: Refactored code to sort contacts by criteria: name , city , zip or state  */
+/* Purpose: Added code to write contacts to file  */
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -119,7 +120,8 @@ public class AddressBook {
         System.out.println("3. Display contacts");
         System.out.println("4. Delete a contact");
         System.out.println("5. Sort contacts ");
-        System.out.println("6. Exit this address book");
+        System.out.println("6. Write contacts to file ");
+        System.out.println("7. Exit this address book");
     }
 
     /* method to direct control to respective contact manipulation action methods*/
@@ -150,11 +152,14 @@ public class AddressBook {
                     sortContacts();
                     break;
                 case 6:
+                    writeContactsToFile();
+                    break;
+                case 7:
                     break;
                 default:
                     System.out.println("Invalid choice.Try again.");
             }
-        } while (choice != 6);
+        } while (choice != 7);
     }
 
     /* method to sort contacts by criterion provided */
@@ -322,6 +327,43 @@ public class AddressBook {
                 i++;
             }
     }
+
+    /*method to write contacts to a file*/
+    private void writeContactsToFile() {
+        int i = 0;
+        ArrayList<String> allContacts = new ArrayList<>(); //arraylist to store contact details
+        if(contactList.size() == 0)
+            System.out.println("Contact list is empty!");
+        else
+            while (i < contactList.size()) {
+                allContacts.add(contactList.get(i).toString());
+                i++;
+            }
+
+        File file = new File("/users/nusrat/Desktop/ContactBook.txt");
+        Writer fileWriter = null;
+        BufferedWriter bufferedWriter = null;
+        try {
+            fileWriter = new FileWriter(file);
+            bufferedWriter = new BufferedWriter(fileWriter);
+            for (String line : allContacts) {
+                line += System.getProperty("line.separator");
+                bufferedWriter.write(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Error in writing file");
+        }finally {
+            if (bufferedWriter != null && fileWriter != null)
+                try {
+                    bufferedWriter.close();
+                    fileWriter.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+        }
+    }
+
+
 
     /* method to delete a contact */
     private void deleteContacts() {
